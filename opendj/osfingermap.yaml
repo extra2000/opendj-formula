@@ -1,0 +1,6 @@
+# -*- coding: utf-8 -*-
+# vim: ft=yaml
+
+CentOS Linux-8: {}
+CentOS Linux-7: {}
+Ubuntu-20.04: {}

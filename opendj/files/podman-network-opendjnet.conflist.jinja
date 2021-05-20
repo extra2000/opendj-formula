@@ -1,0 +1,41 @@
+{
+  "cniVersion": "0.4.0",
+  "name": "{{ pod.network.domain_name }}",
+  "plugins": [
+    {
+      "type": "bridge",
+      "bridge": "{{ pod.network.bridge }}",
+      "isGateway": true,
+      "ipMasq": true,
+      "hairpinMode": true,
+      "ipam": {
+        "type": "host-local",
+        "routes": [{ "dst": "0.0.0.0/0" }],
+        "ranges": [
+          [
+            {
+              "subnet": "{{ pod.network.subnet }}",
+              "gateway": "{{ pod.network.gateway }}"
+            }
+          ]
+        ]
+      }
+    },
+    {
+      "type": "portmap",
+      "capabilities": {
+        "portMappings": true
+      }
+    },
+    {
+      "type": "firewall"
+    },
+    {
+      "type": "tuning"
+    },
+    {
+      "type": "dnsname",
+      "domainName": "{{ pod.network.domain_name }}"
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: {{ projectname }}-opendj-pod
+  name: {{ projectname }}-opendj-pod
+spec:
+  restartPolicy: OnFailure
+  containers:
+  - name: opendj01
+    image: {{ opendj.image.name }}
+    securityContext:
+      allowPrivilegeEscalation: false
+      privileged: false
+      capabilities:
+        add: []
+        drop:
+        - CAP_MKNOD
+        - CAP_NET_RAW
+        - CAP_AUDIT_WRITE
+      seLinuxOptions: {}
+    resources:
+      requests:
+        memory: {{ opendj.resources.requests.memory }}
+      limits:
+        memory: {{ opendj.resources.limits.memory }}
+    ports:
+    - containerPort: {{ opendj.port.ldap_listener_port.container }}
+      hostPort: {{ opendj.port.ldap_listener_port.host }}
+      hostIP: {{ opendj.port.ldap_listener_port.ip }}
+      protocol: tcp
+    - containerPort: {{ opendj.port.ldaps_listener_port.container }}
+      hostPort: {{ opendj.port.ldaps_listener_port.host }}
+      hostIP: {{ opendj.port.ldaps_listener_port.ip }}
+      protocol: tcp
+    - containerPort: {{ opendj.port.administration.container }}
+      hostPort: {{ opendj.port.administration.host }}
+      hostIP: {{ opendj.port.administration.ip }}
+      protocol: tcp
+    env:
+      - name: PORT
+        value: {{ opendj.port.ldap_listener_port.container }}
+      - name: LDAPS_PORT
+        value: {{ opendj.port.ldaps_listener_port.container }}
+      - name: BASE_DN
+        value: {{ opendj.config.base_dn }}
+      - name: ROOT_USER_DN
+        value: {{ opendj.config.root_user_dn }}
+      - name: ROOT_PASSWORD
+        value: {{ opendj.config.root_password }}
+    volumeMounts:
+    - mountPath: /opt/opendj/data
+      name: opendj-data
+    - mountPath: /var/secrets/opendj
+      name: opendj-secrets
+  volumes:
+  - name: opendj-data
+    persistentVolumeClaim:
+      claimName: {{ projectname }}-opendj-data
+  - name: opendj-secrets
+    persistentVolumeClaim:
+      claimName: {{ projectname }}-opendj-secrets
