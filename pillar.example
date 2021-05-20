@@ -1,0 +1,38 @@
+# -*- coding: utf-8 -*-
+# vim: ft=yaml
+
+opendj:
+  lookup:
+    projectname: opendj
+    hostuser:
+      name: vagrant
+      group: vagrant
+    pod:
+      network:
+        subnet: 10.77.1.0/24
+        gateway: 10.77.1.1
+        domain_name: opendjnet
+        bridge: cni-podman1
+    opendj:
+      port:
+        ldap_listener_port:
+          container: 1389
+          host: 1389
+          ip: 0.0.0.0
+        ldaps_listener_port:
+          container: 1636
+          host: 1636
+          ip: 0.0.0.0
+        administration:
+          container: 4444
+          host: 4444
+          ip: 0.0.0.0
+      config:
+        base_dn: "dc=example,dc=com"
+        root_user_dn: "cn=Directory Manager"
+        root_password: "abcde12345"
+      resources:
+        requests:
+          memory: 1500Mi
+        limits:
+          memory: 1500Mi
